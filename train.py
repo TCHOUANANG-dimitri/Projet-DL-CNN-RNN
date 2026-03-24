@@ -1,9 +1,10 @@
 from tensorflow.keras.callbacks import EarlyStopping,ModelCheckpoint
 from models.cnn_model import CustomCNN 
-from utils.cnn_data_loader import load_and_preprocess,make_datasets
+from utils.data_loader import load_and_preprocess,make_datasets
 
 
-(train_ds,test_ds)=make_datasets(load_and_preprocess())
+(x_train,y_train),(x_test,y_test)=load_and_preprocess()
+train_ds, test_ds = make_datasets(x_train, y_train, x_test, y_test)
 
 early_stopping= EarlyStopping(
     monitor='val_loss',
@@ -27,8 +28,8 @@ model.compile(
     loss="SparseCategoricalCrossentropy",
     metrics=['accuracy']
 )
-
-history=model.fit(train_ds[0],train_ds[1],batch_size=100,epochs=20,validation_split=0.15,callbacks=[early_stopping,checkpoint])
+if __name__ == "__main__":
+    history=model.fit(train_ds,batch_size=100,epochs=20,callbacks=[early_stopping,checkpoint])
 
 
 
