@@ -9,6 +9,7 @@ from tensorflow.keras.callbacks import EarlyStopping,ModelCheckpoint
 class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
     def __init__(self,num_classes):
         super(CustomCNN,self).__init__() #  heritage de CustomCNN a la classe tf.keras.Model
+        self.num_classes = num_classes
         # premiere couche de convolution
         self.conv1=layers.Conv2D(
             filters=32,
@@ -54,7 +55,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         self.d4=layers.Dense(32,activation='relu')
         self.d5=layers.Dense(16,activation='relu')
         self.dp=layers.Dropout(rate=0.1)
-        self.d6=layers.Dense(10,activation='softmax')
+        self.d6=layers.Dense(num_classes,activation='softmax')
     
     def call(self,inputs): # Appel des couches du modele lors de l'entrainement
         x=self.conv1(inputs)
@@ -75,3 +76,12 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         x=self.d5(x)
         x=self.dp(x)
         return self.d6(x)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({"num_classes": self.num_classes})
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
