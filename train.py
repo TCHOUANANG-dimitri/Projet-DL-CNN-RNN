@@ -1,4 +1,3 @@
-from tkinter.filedialog import test
 
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -10,7 +9,7 @@ train_ds, test_ds = make_datasets(x_train, y_train, x_test, y_test)
 
 early_stopping = EarlyStopping(
     monitor='val_loss',
-    patience=10,
+    patience=5,
     min_delta=0.001,
     mode='auto',
     restore_best_weights=True,
@@ -32,7 +31,7 @@ model.compile(
 
 if __name__ == '__main__':
     steps_per_epoch = len(x_train) // BATCH_SIZE
-    validation_steps = len(x_test) // BATCH_SIZE0
+    validation_steps = len(x_test) // BATCH_SIZE
 
     history = model.fit(
         train_ds,
