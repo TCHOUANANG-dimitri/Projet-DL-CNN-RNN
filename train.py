@@ -30,14 +30,10 @@ model.compile(
 )
 
 if __name__ == '__main__':
-    steps_per_epoch = len(x_train) // BATCH_SIZE
-    validation_steps = len(x_test) // BATCH_SIZE
 
     history = model.fit(
         train_ds,
         epochs=20,
-        steps_per_epoch=steps_per_epoch,
         validation_data=test_ds,
-        validation_steps=validation_steps,
         callbacks=[early_stopping, checkpoint]
     )

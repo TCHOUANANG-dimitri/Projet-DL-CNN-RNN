@@ -42,7 +42,7 @@ augmentation_layers = tf.keras.Sequential([
 ], name="data_augmentation")
 
 # Constantes du modèle
-BATCH_SIZE = 50
+BATCH_SIZE = 64
 AUTOTUNE   = tf.data.AUTOTUNE
 
 def make_datasets(x_train, y_train, x_test, y_test, batch_size=BATCH_SIZE):

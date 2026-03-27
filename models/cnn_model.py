@@ -12,7 +12,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         self.num_classes = num_classes
         # premiere couche de convolution
         self.conv1=layers.Conv2D(
-            filters=64,
+            filters=128,
             kernel_size=(3,3),
             strides=1,
             padding='same',
@@ -25,7 +25,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         )
         # Deuxieme couche de convolution 
         self.conv2=layers.Conv2D(
-            filters=128,
+            filters=256,
             kernel_size=(3,3),
             strides=1,
             padding='same',
@@ -38,7 +38,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         )
         # Troisieme couche de convolution 
         self.conv3=layers.Conv2D(
-            filters=256,
+            filters=512,
             kernel_size=(3,3),
             strides=1,
             padding='same',
@@ -52,10 +52,10 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         # couche d'applatissement/flatten
         self.flatten=layers.Flatten()
 
-        self.d1=layers.Dense(512,activation='relu')
-        self.d2=layers.Dense(128,activation='relu')
-        self.d3=layers.Dense(64,activation='relu')
-        self.dp=layers.Dropout(rate=0.4)
+        self.d1=layers.Dense(64,activation='relu')
+        self.d2=layers.Dense(32,activation='relu')
+        self.d3=layers.Dense(16,activation='relu')
+        self.dp=layers.Dropout(rate=0.5)
         self.d6=layers.Dense(num_classes,activation='softmax')
     
     def call(self,inputs): # Appel des couches du modele lors de l'entrainement
