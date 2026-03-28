@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 from tensorflow.keras.callbacks import EarlyStopping,ModelCheckpoint
+from tensorflow.keras import regularizers
 
 
 class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
@@ -17,12 +18,15 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
             strides=1,
             padding='same',
             activation='relu',
+            kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn1=layers.BatchNormalization()
+        
         self.pool1=layers.MaxPool2D( #On garde l'essentielle
             pool_size=2,
             strides=2,
         )
+        self.dp1 = layers.Dropout(rate=0.3)
         # Deuxieme couche de convolution 
         self.conv2=layers.Conv2D(
             filters=256,
@@ -30,6 +34,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
             strides=1,
             padding='same',
             activation='relu',
+            kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn2=layers.BatchNormalization()
         self.pool2=layers.MaxPool2D(
@@ -43,6 +48,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
             strides=1,
             padding='same',
             activation='relu',
+            kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn3=layers.BatchNormalization()
         self.pool3=layers.MaxPool2D(
@@ -51,10 +57,10 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         )
         # couche d'applatissement/flatten
         self.flatten=layers.Flatten()
-
-        self.d1=layers.Dense(64,activation='relu')
-        self.d2=layers.Dense(32,activation='relu')
-        self.d3=layers.Dense(16,activation='relu')
+        reg = regularizers.l2(1e-4)
+        self.d1=layers.Dense(64,activation='relu', kernel_regularizer=reg)
+        self.d2=layers.Dense(32,activation='relu', kernel_regularizer=reg)
+        self.d3=layers.Dense(16,activation='relu', kernel_regularizer=reg)
         self.dp=layers.Dropout(rate=0.5)
         self.d6=layers.Dense(num_classes,activation='softmax')
     
@@ -74,6 +80,7 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
         x=self.flatten(x)
 
         x=self.d1(x)
+        x = self.dp1(x)
         x=self.d2(x)
         x=self.d3(x)
         x=self.dp(x)
