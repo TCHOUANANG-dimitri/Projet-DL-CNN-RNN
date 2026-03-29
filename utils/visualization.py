@@ -3,6 +3,7 @@ utils/visualization.py
 Fonctions de visualisation pour le projet CNN CIFAR-10.
 """
 
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -19,7 +20,7 @@ CIFAR10_CLASSES = [
 # 1. COURBES D'APPRENTISSAGE
 # À appeler dans train.py après model.fit()
 # ─────────────────────────────────────────────
-def plot_learning_curves(history, save_path=None):
+def plot_learning_curves(history, save_path=None, show=True):
     """
     Affiche les courbes Loss et Accuracy (train vs validation).
     Paramètre : history.history (dict retourné par model.fit)
@@ -51,7 +52,16 @@ def plot_learning_curves(history, save_path=None):
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
         print(f"[✓] Courbes sauvegardées → {save_path}")
-    plt.show()
+    if show:
+        plt.show()
+    plt.close(fig)
+
+
+def save_history(history, save_path):
+    """Sauvegarde l'historique d'entraînement au format JSON."""
+    with open(save_path, 'w', encoding='utf-8') as f:
+        json.dump(history, f, indent=2)
+    print(f"[✓] Historique sauvegardé → {save_path}")
 
 
 # ─────────────────────────────────────────────
