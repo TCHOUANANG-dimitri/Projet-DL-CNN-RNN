@@ -44,7 +44,7 @@ class SaveHistoryCallback(tf.keras.callbacks.Callback):
 model = CustomCNN(num_classes=10)
 lr_schedule = tf.keras.optimizers.schedules.CosineDecay(
     initial_learning_rate=1e-3,
-    decay_steps=50 * (50000 // BATCH_SIZE)  # 50 époques × steps/époque
+    decay_steps=50 * (50000 // BATCH_SIZE)  
 )
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     try:
         history = model.fit(
             train_ds,
-            epochs=50,
+            epochs=45,
             validation_data=val_ds,
             callbacks=callbacks
         )

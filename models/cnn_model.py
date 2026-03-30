@@ -1,5 +1,4 @@
-from pyexpat import model
-
+#from pyexpat import model
 import tensorflow as tf
 from tensorflow import keras
 from keras import layers
@@ -17,10 +16,15 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
             kernel_size=(3,3),
             strides=1,
             padding='same',
+            activation='relu',
             kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn1=layers.BatchNormalization()
-        self.activation1=layers.Activation('relu') # Activation de la premiere couche de convolution
+        self.dp1 = layers.Dropout(rate=0.4)
+        self.pool1=layers.MaxPool2D( #On garde l'essentielle
+            pool_size=2,
+            strides=2,
+        )
 
         # Deuxieme couche de convolution 
         self.conv2=layers.Conv2D(
@@ -28,28 +32,32 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
             kernel_size=(3,3),
             strides=1,
             padding='same',
+            activation='relu',
             kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn2=layers.BatchNormalization()
-        self.activation2=layers.Activation('relu') # Activation de la deuxieme couche de convolution
-        
-        self.pool1=layers.MaxPool2D( #On garde l'essentielle
+        self.dp2 = layers.Dropout(rate=0.4)
+        self.pool2=layers.MaxPool2D(
             pool_size=2,
             strides=2,
         )
 
-        # Troisieme couche de convolution
+        # Troisieme couche de convolution 
         self.conv3=layers.Conv2D(
             filters=128,
             kernel_size=(3,3),
             strides=1,
             padding='same',
+            activation='relu',
             kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn3=layers.BatchNormalization()
-        self.activation3=layers.Activation('relu') # Activation de la troisieme couche de convolution
-
-        # Quatrieme couche de convolution 
+        self.dp3= layers.Dropout(rate=0.4)
+        self.pool3=layers.MaxPool2D(
+            pool_size=2,
+            strides=2,
+        )
+         # quatrieme couche de convolution 
         self.conv4=layers.Conv2D(
             filters=256,
             kernel_size=(3,3),
@@ -59,45 +67,45 @@ class CustomCNN(tf.keras.Model): # creation de la classe CustomCNN
             kernel_regularizer=regularizers.l2(1e-4)
         )
         self.bn4=layers.BatchNormalization()
-        self.activation4=layers.Activation('relu') # Activation de la quatrieme couche de convolution
-        
-        self.pool2=layers.MaxPool2D( #On garde l'essentielle
+        self.dp4= layers.Dropout(rate=0.4)
+        self.pool4=layers.MaxPool2D(
             pool_size=2,
             strides=2,
         )
-   
         # couche d'applatissement/flatten
         self.flatten=layers.Flatten()
-        # couches denses
-        self.d1=layers.Dense(64,activation='relu', kernel_regularizer=regularizers.l2(1e-4))
-        self.d2=layers.Dense(32,activation='relu', kernel_regularizer=regularizers.l2(1e-4))
-        self.d3=layers.Dense(16,activation='relu', kernel_regularizer=regularizers.l2(1e-4))
+        #couches denses
+        reg = regularizers.l2(1e-4)
+        self.d1=layers.Dense(64,activation='relu', kernel_regularizer=reg)
+        self.d2=layers.Dense(32,activation='relu', kernel_regularizer=reg)
+        self.d3=layers.Dense(16,activation='relu', kernel_regularizer=reg)
         self.dp=layers.Dropout(rate=0.5)
         self.d=layers.Dense(num_classes,activation='softmax')
     
     def call(self,inputs): # Appel des couches du modele lors de l'entrainement
         x=self.conv1(inputs)
         x=self.bn1(x)
-        x=self.activation1(x)
+        x=self.pool1(x)
+
         x=self.conv2(x)
         x=self.bn2(x)
-        x=self.activation2(x)
-        
-        x=self.pool1(x)
+        x=self.pool2(x)
 
         x=self.conv3(x)
         x=self.bn3(x)
-        x=self.activation3(x)
+        x=self.dp3(x)
+        x=self.pool3(x)
+
         x=self.conv4(x)
         x=self.bn4(x)
-        x=self.activation4(x)
-
-        x=self.pool2(x)
+        x=self.pool4(x)
 
         x=self.flatten(x)
 
         x=self.d1(x)
+        x=self.dp1(x)
         x=self.d2(x)
+        x=self.dp2(x)
         x=self.d3(x)
         x=self.dp(x)
         return self.d(x)
